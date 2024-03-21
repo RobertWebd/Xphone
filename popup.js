@@ -1,37 +1,39 @@
+function setNewCallToLocalStorage(call) {
+  const calls = JSON.parse(localStorage.getItem('calls')) ?? [];
+
+  calls.push(call);
+  localStorage.setItem('calls', JSON.stringify(calls));
+}
+
+function getAllCallsFromLocalStorage() {
+  return JSON.parse(localStorage.getItem('calls'));
+}
+
 document.addEventListener('DOMContentLoaded', function () {
-  function setNewCallToLocalStorage(call) {
-    let calls = JSON.parse(localStorage.getItem('calls'));
-
-    if (calls === null) {
-      calls = [];
-    }
-
-    calls.push(call);
-    localStorage.setItem('calls', JSON.stringify(calls));
-  }
-
-  function getAllCallsFromLocalStorage() {
-    return JSON.parse(localStorage.getItem('calls'));
-  }
-
   const registration_container = document.querySelector('.registration_container');
-  const main_container = document.querySelector('.main_container');
+  const mainContainer = document.querySelector('.main_container');
   const call_container = document.querySelector('.call_container');
+  const micAccess = document.querySelector('.mic_access');
   const wrong_number = document.querySelector('.wrong_number');
   const remote_name = document.querySelector('.remote_name');
   const popup_incoming = document.querySelector('.popup_incoming');
+  const historyContainer = document.querySelector('.history_container');
   const audioElement = document.getElementById('remoteAudio');
   const call_status = document.getElementById('call_status');
   const reset_button = document.getElementById('reset_button');
+  const loginForm = document.getElementById('loginForm');
+  const tableBody = document.getElementById('calls_table_body');
 
-  let timerElement = document.getElementById('timer');
+  const timerElement = document.getElementById('timer');
 
   let timerInterval;
   let seconds = 0;
+
   function formatTime(seconds) {
-    let hours = Math.floor(seconds / 3600);
-    let minutes = Math.floor((seconds % 3600) / 60);
-    let secs = seconds % 60;
+    const hours = Math.floor(seconds / 3600);
+    const minutes = Math.floor((seconds % 3600) / 60);
+    const secs = seconds % 60;
+
     return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
   }
   function startTimer() {
@@ -43,74 +45,76 @@ document.addEventListener('DOMContentLoaded', function () {
       timerElement.textContent = formatTime(seconds);
     }, 1000);
   }
-  const displayBlock = (elem) => {
-    elem.style.display = 'block';
+
+  const displayFlex = (elem) => {
+    elem.style.display = 'flex';
+  };
+  const displayBlock = (elems = []) => {
+    elems.forEach((elem) => (elem.style.display = 'block'));
   };
 
-  const displayNone = (elem) => {
-    elem.style.display = 'none';
+  const displayNone = (elems = []) => {
+    elems.forEach((elem) => (elem.style.display = 'none'));
   };
-
-  const loginForm = document.getElementById('loginForm');
 
   loginForm.addEventListener('submit', (e) => {
     e.preventDefault();
-
     function renderCallsTable() {
-      let calls = getAllCallsFromLocalStorage();
-      const tableBody = document.getElementById('calls_table_body');
-      tableBody.innerHTML = '';
-      calls = calls?.filter((call) => call.belongTo === username);
+      const calls = getAllCallsFromLocalStorage();
+      const userCalls = calls?.filter((call) => call.belongTo === username);
 
-      if (!calls || calls.length === 0) {
+      tableBody.innerHTML = '';
+
+      if (!userCalls || userCalls.length === 0) {
         const row = tableBody.insertRow();
         const cell = row.insertCell();
+
         cell.colSpan = 4;
         cell.textContent = 'No calls found';
-      } else {
-        calls.reverse().forEach((call) => {
-          const row = tableBody.insertRow();
-          row.insertCell().textContent = call.name;
-          const startTime = new Date(call.start_time);
-          const formattedDate = `${startTime.getDate().toString().padStart(2, '0')}.${(startTime.getMonth() + 1).toString().padStart(2, '0')}.${startTime.getFullYear()} ${startTime
-            .getHours()
-            .toString()
-            .padStart(2, '0')}:${startTime.getMinutes().toString().padStart(2, '0')}:${startTime.getSeconds().toString().padStart(2, '0')}`;
-          row.insertCell().textContent = formattedDate;
 
-          const retryCell = row.insertCell();
-          const retryButton = document.createElement('button');
-          retryButton.textContent = 'Перезвонить';
-          retryButton.addEventListener('click', function () {
-            try {
-              const target = call.name;
-              session = userAgent.call(target, options);
-              const peer = session.connection;
-              peer.ontrack = function (event) {
-                const remoteStream = event.streams[0];
-                audioElement.srcObject = remoteStream;
-              };
-            } catch (e) {}
-          });
-          retryCell.appendChild(retryButton);
-        });
+        return;
       }
+
+      userCalls.reverse().forEach((call) => {
+        const row = tableBody.insertRow();
+        row.insertCell().textContent = call.name;
+        const startTime = new Date(call.start_time);
+        const formattedDate = `${startTime.getDate().toString().padStart(2, '0')}.${(startTime.getMonth() + 1).toString().padStart(2, '0')}.${startTime.getFullYear()} ${startTime
+          .getHours()
+          .toString()
+          .padStart(2, '0')}:${startTime.getMinutes().toString().padStart(2, '0')}:${startTime.getSeconds().toString().padStart(2, '0')}`;
+        row.insertCell().textContent = formattedDate;
+
+        const retryCell = row.insertCell();
+        const retryButton = document.createElement('button');
+        retryButton.classList.add('retry_button');
+        retryButton.textContent = 'Перезвонить';
+        retryButton.addEventListener('click', function () {
+          try {
+            const target = call.name;
+            session = userAgent.call(target, options);
+            const peer = session.connection;
+            peer.ontrack = function (event) {
+              const remoteStream = event.streams[0];
+              audioElement.srcObject = remoteStream;
+            };
+          } catch (e) {}
+        });
+        retryCell.appendChild(retryButton);
+      });
     }
 
     document.querySelector('.calls_history_btn').addEventListener('click', function () {
-      const history_container = document.querySelector('.history_container');
-
       document.querySelector('.back_to_main').addEventListener('click', function () {
-        displayBlock(main_container);
-        displayNone(history_container);
+        displayFlex(mainContainer);
+        displayNone([historyContainer]);
       });
 
       renderCallsTable();
 
-      history_container.style.display = 'flex';
-      main_container.style.display = 'none';
+      displayFlex(historyContainer);
+      displayNone([mainContainer]);
     });
-    //tim
 
     const username = document.getElementById('username').value;
     const password = document.getElementById('password').value;
@@ -128,11 +132,11 @@ document.addEventListener('DOMContentLoaded', function () {
 
     const userAgent = new JsSIP.UA(configuration);
 
-    userAgent.on('registered', function (e) {
-      displayNone(registration_container);
+    userAgent.on('registered', function () {
+      displayNone([registration_container]);
 
       document.querySelector('.registered_name').innerHTML = username;
-      displayBlock(main_container);
+      displayFlex(mainContainer);
     });
 
     userAgent.start();
@@ -141,8 +145,10 @@ document.addEventListener('DOMContentLoaded', function () {
       userAgent.unregister({
         all: true,
       });
-      displayNone(main_container);
-      displayBlock(registration_container);
+      userAgent.stop();
+      wrong_number.innerHTML = '';
+      displayNone([mainContainer]);
+      displayFlex(registration_container);
     });
     // для Входящих звонков
     userAgent.on('newRTCSession', (data) => {
@@ -152,11 +158,17 @@ document.addEventListener('DOMContentLoaded', function () {
         if (session.direction === 'incoming') {
           const name = session._local_identity._uri._user;
           let callName;
+
+          session.on('failed', () => {
+            displayNone([popup_incoming]);
+          });
+
           if (name === '0341931') {
             callName = '0341932';
           } else {
             callName = '0341931';
           }
+
           const call = {
             id: new Date().getTime(),
             belongTo: name,
@@ -168,47 +180,52 @@ document.addEventListener('DOMContentLoaded', function () {
 
           remote_name.innerHTML = session.remote_identity._uri._user;
           document.querySelector('.incoming_name').innerHTML = session.remote_identity._uri._user;
-          popup_incoming.style.display = 'flex';
+          displayFlex(popup_incoming);
+
           document.querySelector('.accept_call').addEventListener('click', () => {
             session.answer();
+
+            session.on('failed', (e) => {
+              if (e.cause === 'User Denied Media Access') {
+                micAccess.innerHTML = 'Разрешите доступ к микрофону';
+
+                // displayBlock
+                displayNone([call_container, historyContainer]);
+                displayFlex(mainContainer);
+              }
+            });
 
             const peer = session.connection;
 
             session.on('ended', () => {
-              displayNone(call_container);
-              displayBlock(main_container);
+              displayNone([call_container]);
+              displayFlex(mainContainer);
             });
 
             peer.ontrack = function (event) {
               const remoteStream = event.streams[0];
               audioElement.srcObject = remoteStream;
             };
+
             call_status.innerHTML = 'Соединено';
-            displayNone(popup_incoming);
-            // popup_incoming.style.display = 'none';
-            displayNone(main_container);
-            // main_container.style.display = 'none';
-            displayBlock(timerElement);
-            // timerElement.style.display = 'block';
+
+            displayNone([popup_incoming, mainContainer, historyContainer]);
+            displayBlock([timerElement, call_container]);
+
             startTimer();
-            displayBlock(call_container);
-            // call_container.style.display = 'block';
-            //передать имя таймер call status
           });
 
           reset_button.addEventListener('click', function () {
-            displayNone(call_container);
-            displayBlock(main_container);
-            // call_container.style.display = 'none';
-            // main_container.style.display = 'block';
-            // end call
+            displayNone([call_container]);
+            displayFlex(mainContainer);
+
             session.terminate();
           });
-          // Ответ на входящий звонок
+
           document.querySelector('.terminate_call').addEventListener('click', () => {
             session.terminate();
 
-            displayNone(popup_incoming);
+            displayNone([popup_incoming]);
           });
         }
       }
@@ -225,40 +242,39 @@ document.addEventListener('DOMContentLoaded', function () {
         setNewCallToLocalStorage(call);
 
         wrong_number.innerHTML = '';
-        displayNone(timerElement);
-        displayNone(main_container);
+        displayNone([timerElement, mainContainer, historyContainer]);
         remote_name.innerHTML = e.response.to._uri._user;
-        displayBlock(call_container);
+        displayBlock([call_container]);
         call_status.innerHTML = 'Вызываю';
-        displayNone(document.querySelector('.history_container'));
 
         reset_button.addEventListener('click', function () {
           session.terminate();
         });
       },
 
-      confirmed: function (e) {
+      confirmed: function () {
         call_status.innerHTML = 'Соединено';
 
-        displayBlock(timerElement);
+        displayBlock([timerElement]);
         startTimer();
       },
 
       failed: function (e) {
         if (e.cause === 'User Denied Media Access') {
-          document.querySelector('.mic_access').innerHTML = 'Разрешите доступ к микрофону';
+          micAccess.innerHTML = 'Разрешите доступ к микрофону';
+          displayNone([historyContainer]);
         }
 
-        if (e.cause !== 'Canceled' && e.cause !== 'Unavailable' && e.cause !== 'Busy' && e.cause !== 'Rejected') {
-          wrong_number.innerHTML = 'Введите правильный номер';
+        if (['Unavailable', 'Busy', 'Rejected', 'SIP Failure Code'].includes(e.cause)) {
+          wrong_number.innerHTML = 'Отклонён';
         }
 
-        displayBlock(main_container);
-        displayNone(call_container);
+        displayFlex(mainContainer);
+        displayNone([call_container]);
       },
       ended: function (e) {
-        displayBlock(main_container);
-        displayNone(call_container);
+        displayFlex(mainContainer);
+        displayNone([call_container]);
       },
     };
 
@@ -272,14 +288,16 @@ document.addEventListener('DOMContentLoaded', function () {
     document.getElementById('callButton').addEventListener('click', function () {
       try {
         const target = document.getElementById('sipOrNumber').value;
-        session = userAgent.call(target, options);
 
+        session = userAgent.call(target, options);
         const peer = session.connection;
         peer.ontrack = function (event) {
           const remoteStream = event.streams[0];
           audioElement.srcObject = remoteStream;
         };
-      } catch (e) {}
+      } catch (e) {
+        console.log(e);
+      }
     });
   });
 });

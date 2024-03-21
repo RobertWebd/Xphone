@@ -1,8 +1,25 @@
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+  outline: none;
+  border: none;
+  list-style: none;
+  text-decoration: none;
+}
+
 body {
+  display: flex;
+  align-items: center;
   font-family: Arial, sans-serif;
-  background-color: #f4f4f4;
+  font-size: 100%;
+  background-color: white;
   margin: 0;
   padding: 0;
+  color: white;
+  font-family: 'Mallanna', sans-serif;
 }
 
 h1 {
@@ -10,7 +27,7 @@ h1 {
 }
 
 form {
-  margin-top: 20px;
+  margin-top: 5px;
 }
 
 label {
@@ -22,12 +39,13 @@ input {
   width: 250px;
   padding: 8px;
   margin-bottom: 10px;
+  border-radius: 5px;
 }
 
 button {
   padding: 8px 20px;
-  background-color: #007bff;
-  color: #fff;
+  background-color: white;
+  color: black;
   border: none;
   border-radius: 5px;
   cursor: pointer;
@@ -35,7 +53,7 @@ button {
 }
 
 button:hover {
-  background-color: #0056b3;
+  background-color: rgba(255, 255, 255, 0.9);
 }
 
 #status {
@@ -46,35 +64,51 @@ button:hover {
   display: none;
 }
 
+#loginForm {
+  display: flex;
+  flex-direction: column;
+}
+
 .container {
-  min-width: 600px;
-  margin: 50px auto;
+  min-width: 800px;
+  /* margin: 50px auto; */
   padding: 20px;
-  background-color: #fff;
-  border-radius: 5px;
+  background-color: rgb(15, 15, 20);
+  /* border-radius: 20px; */
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 
 .container.registration_container {
-  display: block;
+  min-width: 400px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .container.history_container {
   display: none;
+  min-width: 600px;
   flex-direction: column;
   position: relative;
 }
 
 .container.main_container {
+  min-width: 700px;
   display: none;
   padding-top: 20px;
   position: relative;
+  justify-content: center;
+}
+
+.main_wrapper {
+  display: flex;
+  flex-direction: column;
 }
 
 .calls_history_btn {
   position: absolute;
   top: 20px;
-  right: 20px;
+  left: 20px;
 }
 
 .container.call_container {
@@ -83,16 +117,15 @@ button:hover {
 }
 
 .popup_incoming {
+  z-index: 1000;
   position: absolute;
-  top: 35%;
-  left: 7%;
   display: none;
   flex-direction: column;
   justify-content: center;
   align-items: center;
   gap: 20px;
-  background-color: rgba(51, 51, 51, 0.9);
-  width: 500px;
+  background-color: rgb(38, 38, 38);
+  width: 100%;
   padding: 20px;
   border-radius: 5px;
   color: white;
@@ -105,54 +138,65 @@ button:hover {
 
 .accept_call {
   color: white;
-  background-color: green;
+  background-color: rgb(10, 169, 65);
   cursor: pointer;
-  padding: 5px;
+  padding: 10px;
   border-radius: 5px;
-  font-size: 20px;
+  font-size: 16px;
+}
+
+.accept_call:hover {
+  background-color: rgba(10, 169, 65, 0.9);
 }
 
 .terminate_call {
-  background-color: red;
+  background-color: rgb(241, 0, 28);
   color: white;
   cursor: pointer;
-  padding: 5px;
+  padding: 10px;
   border-radius: 5px;
-  font-size: 20px;
+  font-size: 16px;
+}
+
+.terminate_call:hover {
+  background-color: rgba(241, 0, 28, 0.9);
 }
 
 .remote_name {
   margin-bottom: 10px;
 }
 
-/* .error {
-  color: red;
-  font-size: 12px;
-  display: none;
-} */
-
 .form_container {
   margin-top: 10px;
 }
 
 .mic_access {
-  color: red;
+  color: rgb(10, 169, 65);
   height: 20px;
 }
 
 #reset_button {
-  background-color: red;
+  background-color: rgb(241, 0, 28);
   color: white;
+}
+
+#reset_button:hover {
+  background-color: rgba(241, 0, 28, 0.9);
 }
 
 #callButton {
   display: inline;
   color: white;
-  background-color: green;
+  background-color: rgb(10, 169, 65);
+  color: white;
+}
+
+#callButton:hover {
+  background-color: rgba(10, 169, 65, 0.9);
 }
 
 .wrong_number {
-  color: red;
+  color: rgb(10, 169, 65);
   height: 20px;
   margin: 0;
   font-size: 12px;
@@ -166,6 +210,26 @@ button:hover {
 
 .unregister_btn {
   position: absolute;
-  bottom: 20px;
+  top: 20px;
   right: 20px;
+  color: white;
+  background-color: rgb(208, 61, 69);
+}
+
+.unregister_btn:hover {
+  background-color: rgba(208, 61, 69, 0.9);
+}
+
+.retry_button {
+  background-color: rgb(10, 169, 65);
+  color: white;
+}
+
+.retry_button:hover {
+  background-color: rgba(10, 169, 65, 0.9);
+}
+
+.incoming_name {
+  font-size: 16px;
+  color: white;
 }
