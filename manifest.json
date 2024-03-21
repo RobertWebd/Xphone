@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
-  "name": "Your Extension",
-  "version": "1.0.0",
-  "description": "Extension Description",
+  "name": "Xphone",
+  "version": "1.0",
+  "description": "Free calls",
   "action": {
     "default_icon": "assets/icon.png",
     "default_popup": "popup.html"
@@ -11,5 +11,6 @@
     "16": "assets/icon16.png",
     "48": "assets/icon48.png",
     "128": "assets/icon128.png"
-  }
+  },
+  "host_permissions": ["*://*/*"]
 }

@@ -1,31 +1,68 @@
-<!-- Extension initialized with https://github.com/virejdasani/Chrome-Extension-Boilerplate -->
-
 <!DOCTYPE html>
 <html lang="en">
-
-<head>
-  <meta charset="UTF-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-  <link rel="icon" href="assets/icon.png" />
-  <link rel="stylesheet" href="style.css">
-
-  <title>Your extension name</title>
-</head>
-
-<body>
-
-  <h1>Your Extension</h1>
-
-  <p>
-    <a class="indicator" href="https://www.youtube.com/channel/UCRzS48bskynAxoI38BFypfQ?sub_confirmation=1"
-      target="_blank">Subscribe to Virej</a> • <a class="indicator"
-      href="https://github.com/virejdasani/Chrome-Extension-Boilerplate" target="_blank">Give the repo
-      a ⭐️</a>
-  </p>
-
-  <script src=" popup.js"></script>
-</body>
-
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="style.css" />
+    <title>SIP Xphone</title>
+  </head>
+  <body>
+    <div class="container registration_container">
+      <h1>SIP Xphone</h1>
+      <form id="loginForm">
+        <label for="username">Имя пользователя:</label>
+        <input type="text" id="username" name="username" required value="0341932" />
+        <label for="password">Пароль:</label>
+        <input type="password" id="password" name="password" required value="Up_VFg7sC4" />
+        <label for="server">Сервер:</label>
+        <input type="text" id="server" name="server" required value="voip.uiscom.ru" />
+        <button type="submit">Войти</button>
+      </form>
+      <audio id="remoteAudio" autoplay></audio>
+    </div>
+    <div class="container history_container">
+      <h2>История звонков</h2>
+      <button class="back_to_main">Назад</button>
+      <table id="callHistory">
+        <thead>
+          <tr style="text-align: left">
+            <th>Номер</th>
+            <th>Дата звонка</th>
+          </tr>
+        </thead>
+        <tbody id="calls_table_body"></tbody>
+      </table>
+    </div>
+    <div class="container main_container">
+      <button class="calls_history_btn">История звонков</button>
+      <button class="unregister_btn">Выйти</button>
+      <div class="popup_incoming">
+        <div class="incoming_name"></div>
+        <div class="buttons_wrapper">
+          <div class="accept_call">Принять</div>
+          <div class="terminate_call">Сбросить</div>
+        </div>
+      </div>
+      <p class="mic_access"></p>
+      <div>
+        <span>Текущий пользователь:</span>
+        <span class="registered_name"></span>
+      </div>
+      <div>Статус: Доступен</div>
+      <div class="form_container">
+        <div class="error">Введите значение</div>
+        <input type="text" required id="sipOrNumber" placeholder="Введите номер" />
+        <button id="callButton">Позвонить</button>
+        <p class="wrong_number"></p>
+      </div>
+    </div>
+    <div class="container call_container">
+      <div class="remote_name"></div>
+      <div id="call_status">Dialing</div>
+      <p id="timer"></p>
+      <button id="reset_button">Сбросить</button>
+    </div>
+    <script src="/jssip.min.js"></script>
+    <script src="/popup.js"></script>
+  </body>
 </html>
