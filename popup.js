@@ -70,7 +70,7 @@ document.addEventListener('DOMContentLoaded', function () {
         const cell = row.insertCell();
 
         cell.colSpan = 4;
-        cell.textContent = 'No calls found';
+        cell.textContent = 'Звонков не найдено';
 
         return;
       }
